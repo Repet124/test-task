@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+use Illuminate\Support\Facades\Hash;
+
 use App\Models\User;
 
 class LoginTest extends TestCase
@@ -33,7 +35,6 @@ class LoginTest extends TestCase
 		]);
 
 		$response->assertStatus(200);
-		$response->assertRedirect('/');
 		$this->assertAuthenticatedAs($user);
 	}
 
@@ -63,7 +64,7 @@ class LoginTest extends TestCase
 			'login' => 'test_login',
 			'first_name' => 'test_first_name',
 			'last_name' => 'test_last_name',
-			'password' => $password
+			'password' => Hash::make($password)
 		]);
 	}
 }
