@@ -57,7 +57,16 @@ class EventAPITest extends TestCase {
 	}
 
 	public function test_fail_creating_event() {
-		// code...
+		$user = User::factory()->create();
+
+		$response = $this
+			->actingAs($user)
+			->post('/api/events/create',[
+				'title' => '',
+				'descripton' => 'test_description',
+			]);
+
+		$response->assertEquals(Event::all()->count(), 0);
 	}
 
 	public function test_destroy_event() {
