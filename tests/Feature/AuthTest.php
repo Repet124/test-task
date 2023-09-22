@@ -33,12 +33,11 @@ class AuthTest extends TestCase
 	}
 
 	public function test_success_authorization() {
-		$password = $this->userData['password'];
-		$user = $this->createUser($password);
+		$user = $this->createUser();
 
 		$response = $this->post('/login', [
 			'login' => $user->login,
-			'password' => $password
+			'password' => $this->userData['password']
 		]);
 
 		$response->assertStatus(200);
@@ -46,12 +45,11 @@ class AuthTest extends TestCase
 	}
 
 	public function test_fail_authorization() {
-		$password = $this->userData['password'];
-		$user = $this->createUser($password);
+		$user = $this->createUser();
 
 		$response = $this->post('/login', [
 			'login' => 'abracadabra',
-			'password' => $password
+			'password' => $this->userData['password']
 		]);
 
 		$response->assertStatus(403);
@@ -83,12 +81,12 @@ class AuthTest extends TestCase
 
 		$response->assertRedirect('/login');
 
-		$user = User::all()->first();
+		$user = User::where('login', $this->userData['login'])->first();
 
-		$this->assertEqual($user->login, $this->userData['login']);
-		$this->assertEqual($user->first_name, $this->userData['first_name']);
-		$this->assertEqual($user->last_name, $this->userData['last_name']);
-		$this->assertEqual($user->password, Hash::make($this->userData['password']));
+		$this->assertEquals($user->login, $this->userData['login']);
+		$this->assertEquals($user->first_name, $this->userData['first_name']);
+		$this->assertEquals($user->last_name, $this->userData['last_name']);
+		$this->assertTrue(Hash::check($this->userData['password'],$user->password));
 
 	}
 
@@ -97,7 +95,7 @@ class AuthTest extends TestCase
 			'login' => $this->userData['login'],
 			'first_name' => $this->userData['first_name'],
 			'last_name' => $this->userData['last_name'],
-			'password' => Hash::make($this->userData['password'])
+			'password' => $this->userData['password']
 		]);
 	}
 }
