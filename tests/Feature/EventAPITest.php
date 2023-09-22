@@ -91,7 +91,14 @@ class EventAPITest extends TestCase {
 	}
 
 	public function test_request_for_involving_user_in_event() {
-		// code...
+		$event = Event::factory()->create();
+		$otherUser = User::factory()->create();
+
+		$response = $this
+			->actingAs($otherUser)
+			->get("/api/events/$event->id/involve");
+
+		$response->assertEquals($event->members->last(), $otherUser);
 	}
 
 	public function test_to_dismiss_user_from_event() {
