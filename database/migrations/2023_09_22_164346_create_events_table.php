@@ -6,22 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void
+	{
+		Schema::create('events', function (Blueprint $table) {
+			$table->id();
+			$table->string('title')->unique();
+			$table->text('description');
+			$table->foreign('creator')->references('id')->on('users');
+			$table->timestamps();
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('events');
-    }
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void
+	{
+		Schema::dropIfExists('events');
+	}
 };
