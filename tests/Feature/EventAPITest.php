@@ -70,7 +70,13 @@ class EventAPITest extends TestCase {
 	}
 
 	public function test_destroy_event() {
-		// code...
+		$event = Event::factory()->create();
+
+		$response = $this
+			->actingAs($event->creator)
+			->delete("/api/events/$event->id");
+
+		$response->assertEquals(Event::all()->count(), 0);
 	}
 
 	public function test_request_for_involving_user_in_event() {
