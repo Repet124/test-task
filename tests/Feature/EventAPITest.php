@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -37,7 +38,22 @@ class EventAPITest extends TestCase {
 	}
 
 	public function test_success_creating_event() {
+		$user = User::factory()->create();
 
+		$response = $this
+			->actingAs($user)
+			->post('/api/events/create',[
+				'title' => 'test_title',
+				'descripton' => 'test_description',
+			]);
+
+		$response->assertOk();
+
+		$event = Event::all()->first();
+
+		$response->assertEquals($event->title, 'test_title');
+		$response->assertEquals($event->descripton, 'test_description');
+		$response->assertEquals($event->creator->id, $user->id);
 	}
 
 	public function test_fail_creating_event() {
