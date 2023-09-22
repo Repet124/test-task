@@ -90,6 +90,19 @@ class AuthTest extends TestCase
 
 	}
 
+	// logout
+
+	public function test_logout() {
+		$user = $this->createUser();
+
+		$response = $this
+			->actingAs($user)
+			->get('/logout');
+
+		$this->assertGuest();
+		$this->assertRedirect('/login');
+	}
+
 	protected function createUser(): User {
 		return User::create([
 			'login' => $this->userData['login'],
