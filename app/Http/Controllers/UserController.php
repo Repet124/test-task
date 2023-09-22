@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -30,6 +31,20 @@ class UserController extends Controller
 
 	public function create() {
 		return view('register');
+	}
+
+	public function store(Request $request) {
+		$credentials = $request->validate([
+			'login' => 'required|unique:users|max:20|min:2',
+			'password' => 'required|min:8',
+			'first_name' => 'required|max:255',
+			'last_name' => 'required|max:255',
+		]);
+
+		$user = User::create($credentials);
+
+		return redirect()->route('login');
+
 	}
 
 }
