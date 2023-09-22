@@ -99,8 +99,8 @@ class AuthTest extends TestCase
 			->actingAs($user)
 			->get('/logout');
 
+		$response->assertRedirect('/login');
 		$this->assertGuest();
-		$this->assertRedirect('/login');
 	}
 
 	protected function createUser(): User {
