@@ -15,23 +15,24 @@ class EventAPITest extends TestCase {
 
 	public function test_getting_events_list() {
 
-		$event = Event::factory()->create()[0];
+		$event = Event::factory()->create()->first();
+		$usersId = User::factory(3)->create()->map(fn($user) => $user->id);
+		$event->members()->attach($usersId);
 
 		$response = $this->get('/api/events');
 
 		$response
-			->assertStatus(201)
-			->assertJson(fn (AsserttableJson $json) =>
-				$json->has('events', 1,fn (AsserttableJson $json) =>
+			->assertJson(fn (AssertableJson $json) =>
+				$json->has('events', 1,fn (AssertableJson $json) =>
 					$json->where('title', $event->title)
-						->where('description', $event->descripton)
+						->where('description', $event->description)
 						->where('creator.id', $event->creator->id)
 						->where('creator.first_name', $event->creator->first_name)
 						->where('creator.last_name', $event->creator->last_name)
-						->has('members', 3, fn (AsserttableJson $json) =>
+						->has('members', 3, fn (AssertableJson $json) =>
 							$json->where('id', $event->members[0]->id)
 								->etc()
-						)
+					)->etc()
 				)
 			);
 
