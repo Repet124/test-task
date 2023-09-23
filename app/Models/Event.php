@@ -11,6 +11,6 @@ class Event extends Model
 	use HasFactory;
 
 	public function creator() {
-		return $this->belongsTo(User::class, 'creator');
+		return $this->belongsTo(User::class, 'creator_id');
 	}
 }

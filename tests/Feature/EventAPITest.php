@@ -104,7 +104,7 @@ class EventAPITest extends TestCase {
 	public function test_to_dismiss_user_from_event() {
 		$event = Event::factory()->create();
 		$otherUser = User::factory()->create();
-		$event->addMember($otherUser);
+		$event->members->attach($otherUser->id);
 
 		$response = $this
 			->actingAs($otherUser)
