@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/events', [EventController::class, 'index'])->name('events-list');
 Route::post('/events', [EventController::class, 'store'])->name('event-store');
+Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('event-destroy');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

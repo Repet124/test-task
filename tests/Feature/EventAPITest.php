@@ -77,18 +77,26 @@ class EventAPITest extends TestCase {
 			->actingAs($event->creator)
 			->delete("/api/events/$event->id");
 
-		$response->assertEquals(Event::all()->count(), 0);
+		$response->assertJson([
+			'error' => null
+		]);
+
+		$this->assertEquals(Event::all()->count(), 0);
 	}
 
 	public function test_fail_destroy_event() {
-		Event::factory()->create();
+		$event = Event::factory()->create();
 		$otherUser = User::factory()->create();
 
 		$response = $this
 			->actingAs($otherUser)
 			->delete("/api/events/$event->id");
 
-		$response->assertEquals(Event::all()->count(), 0);
+		$response->assertJson([
+			'error' => 'creator id dont match with user'
+		]);
+
+		$this->assertEquals(Event::all()->count(), 1);
 	}
 
 	public function test_request_for_involving_user_in_event() {
@@ -99,7 +107,7 @@ class EventAPITest extends TestCase {
 			->actingAs($otherUser)
 			->get("/api/events/$event->id/involve");
 
-		$response->assertEquals($event->members->last(), $otherUser);
+		$this->assertEquals($event->members->last(), $otherUser);
 	}
 
 	public function test_to_dismiss_user_from_event() {
@@ -111,7 +119,7 @@ class EventAPITest extends TestCase {
 			->actingAs($otherUser)
 			->get("/api/events/$event->id/leave");
 
-		$response->assertNotEquals($event->members->last(), $otherUser);
+		$this->assertNotEquals($event->members->last(), $otherUser);
 	}
 
 }

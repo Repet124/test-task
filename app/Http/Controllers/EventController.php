@@ -54,8 +54,17 @@ class EventController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Event $event)
-	{
-		//
+	public function destroy(Event $event) {
+		if (auth()->user()->id === $event->creator->id) {
+			$event->delete();
+			return response()->json([
+				'error'=> null,
+				'result' => true
+			]);
+		}
+		return response()->json([
+			'error' => 'creator id dont match with user',
+			'result' => false
+		]);
 	}
 }
