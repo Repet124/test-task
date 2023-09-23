@@ -119,7 +119,7 @@ class EventAPITest extends TestCase {
 			->actingAs($otherUser)
 			->get("/api/events/$event->id/leave");
 
-		$this->assertNotEquals($event->members->last()->id, $otherUser->id);
+		$this->assertEquals($event->members->count(), 0);
 	}
 
 }

@@ -67,4 +67,20 @@ class EventController extends Controller
 			'result' => true
 		]);
 	}
+
+	public function leave(Event $event) {
+		$user = auth()->user();
+
+		if($event->members->contains($user)) {
+			$event->members()->detach($user->id);
+			return response()->json([
+				'error' => null,
+				'result' => true
+			]);
+		}
+		return response()->json([
+			'error' => 'you are not involments in event',
+			'result' => false
+		]);
+	}
 }
