@@ -10,6 +10,16 @@ class Event extends Model
 {
 	use HasFactory;
 
+	protected $fillable = [
+		'title',
+		'description',
+		'creator_id'
+	];
+
+	protected $hidden = [
+		'creator_id'
+	];
+
 	public function creator() {
 		return $this->belongsTo(User::class, 'creator_id');
 	}

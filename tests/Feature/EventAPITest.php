@@ -43,18 +43,18 @@ class EventAPITest extends TestCase {
 
 		$response = $this
 			->actingAs($user)
-			->post('/api/events/create',[
+			->post('/api/events',[
 				'title' => 'test_title',
-				'descripton' => 'test_description',
+				'description' => 'test_description',
 			]);
 
 		$response->assertOk();
 
 		$event = Event::all()->first();
 
-		$response->assertEquals($event->title, 'test_title');
-		$response->assertEquals($event->descripton, 'test_description');
-		$response->assertEquals($event->creator->id, $user->id);
+		$this->assertEquals($event->title, 'test_title');
+		$this->assertEquals($event->description, 'test_description');
+		$this->assertEquals($event->creator->id, $user->id);
 	}
 
 	public function test_fail_creating_event() {
@@ -62,12 +62,12 @@ class EventAPITest extends TestCase {
 
 		$response = $this
 			->actingAs($user)
-			->post('/api/events/create',[
+			->post('/api/events',[
 				'title' => '',
 				'descripton' => 'test_description',
 			]);
 
-		$response->assertEquals(Event::all()->count(), 0);
+		$this->assertEquals(Event::all()->count(), 0);
 	}
 
 	public function test_destroy_event() {
