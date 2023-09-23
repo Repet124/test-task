@@ -13,4 +13,8 @@ class Event extends Model
 	public function creator() {
 		return $this->belongsTo(User::class, 'creator_id');
 	}
+
+	public function members() {
+		return $this->belongsToMany(User::class, 'event_member', 'event_id', 'member_id');
+	}
 }
