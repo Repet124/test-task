@@ -107,19 +107,19 @@ class EventAPITest extends TestCase {
 			->actingAs($otherUser)
 			->get("/api/events/$event->id/involve");
 
-		$this->assertEquals($event->members->last(), $otherUser);
+		$this->assertEquals($event->members->last()->id, $otherUser->id);
 	}
 
 	public function test_to_dismiss_user_from_event() {
 		$event = Event::factory()->create();
 		$otherUser = User::factory()->create();
-		$event->members->attach($otherUser->id);
+		$event->members()->attach($otherUser->id);
 
 		$response = $this
 			->actingAs($otherUser)
 			->get("/api/events/$event->id/leave");
 
-		$this->assertNotEquals($event->members->last(), $otherUser);
+		$this->assertNotEquals($event->members->last()->id, $otherUser->id);
 	}
 
 }

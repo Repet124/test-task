@@ -36,22 +36,6 @@ class EventController extends Controller
 	}
 
 	/**
-	 * Display the specified resource.
-	 */
-	public function show(Event $event)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 */
-	public function update(Request $request, Event $event)
-	{
-		//
-	}
-
-	/**
 	 * Remove the specified resource from storage.
 	 */
 	public function destroy(Event $event) {
@@ -65,6 +49,22 @@ class EventController extends Controller
 		return response()->json([
 			'error' => 'creator id dont match with user',
 			'result' => false
+		]);
+	}
+
+	public function involve(Event $event) {
+		$user = auth()->user();
+
+		if($event->members->contains($user)) {
+			return response()->json([
+				'error' => 'you are already involvments',
+				'result' => false
+			]);
+		}
+		$event->members()->attach($user->id);
+		return response()->json([
+			'error' => null,
+			'result' => true
 		]);
 	}
 }
