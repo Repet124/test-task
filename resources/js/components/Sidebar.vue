@@ -1,9 +1,15 @@
 <script setup>
 	import axios from 'axios';
-	import { ref } from 'vue'
+	import { ref, computed } from 'vue'
 
 	const props = defineProps(['user']);
-	const events = ref(null);
+	const events = ref([]);
+
+	const myEvents = computed(() => {
+		return events.value.filter(event => event.creator.id === props.user.id);
+	});
+
+
 	function getEvents() {
 		axios.get('/api/events')
 			.then(response => {
@@ -36,9 +42,18 @@
 				<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 					<!-- Add icons to the links using the .nav-icon class
 							 with font-awesome or any other icon font library -->
-					<li v-if="events" v-for="event in events" class="nav-item">
+					<li class="nav-header">ВСЕ СОБЫТИЯ</li>
+					<li v-if="events.length" v-for="event in events" class="nav-item">
 						<router-link :to="`/dashboard/event/${event.id}`" class="nav-link">
-							<i class="nav-icon fas fa-th"></i>
+							<i class="fas fa-circle nav-icon"></i>
+							<p>{{ event.title }}</p>
+						</router-link>
+					</li>
+
+					<li class="nav-header">MOИ СОБЫТИЯ</li>
+					<li v-if="events.length" v-for="event in myEvents" class="nav-item">
+						<router-link :to="`/dashboard/event/${event.id}`" class="nav-link">
+							<i class="fas fa-circle nav-icon"></i>
 							<p>{{ event.title }}</p>
 						</router-link>
 					</li>
