@@ -19,7 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <body class="hold-transition sidebar-mini">
 
 <!-- ./wrapper -->
-<div id="app"></div>
+<div id="app" class="wrapper"></div>
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
