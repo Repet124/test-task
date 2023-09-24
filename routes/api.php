@@ -14,14 +14,13 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::middleware('auth:sanctum')->group(function () {
 
-Route::get('/events', [EventController::class, 'index'])->name('events-list');
-Route::post('/events', [EventController::class, 'store'])->name('event-store');
-Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('event-destroy');
+	Route::get('/events', [EventController::class, 'index'])->name('events-list');
+	Route::post('/events', [EventController::class, 'store'])->name('event-store');
+	Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('event-destroy');
 
-Route::get('/events/{event}/involve', [EventController::class, 'involve'])->name('event-involve');
-Route::get('/events/{event}/leave', [EventController::class, 'leave'])->name('event-leave');
+	Route::get('/events/{event}/involve', [EventController::class, 'involve'])->name('event-involve');
+	Route::get('/events/{event}/leave', [EventController::class, 'leave'])->name('event-leave');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });
