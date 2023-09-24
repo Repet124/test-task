@@ -1,3 +1,6 @@
+<script setup>
+	const props = defineProps(['user']);
+</script>
 <template>
 	<aside class="main-sidebar sidebar-dark-primary elevation-4">
 		<!-- Brand Logo -->
@@ -10,7 +13,7 @@
 			<!-- Sidebar user panel (optional) -->
 			<div class="user-panel mt-3 pb-3 mb-3 d-flex">
 				<div class="info">
-					<a href="#" class="d-block">Alexander Pierce</a>
+					<a href="#" class="d-block">{{ user.last_name }} {{ user.first_name }}</a>
 				</div>
 			</div>
 

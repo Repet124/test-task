@@ -15,6 +15,8 @@ const router = createRouter({
 	routes: routes
 });
 
-const app = createApp(App);
+const app = createApp(App, {
+	user: JSON.parse(document.getElementById('app').dataset.user)
+});
 app.use(router);
 app.mount('#app');

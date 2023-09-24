@@ -16,8 +16,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
 
-	Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
-	Route::get('/dashboard/{any}', fn() => view('dashboard'))->where('any', '.*');
+	Route::get('/dashboard', function() {
+		return view('dashboard', ['user' => auth()->user()]);
+	})->name('dashboard');
+
+	Route::get('/dashboard/{any}', function() {
+		return view('dashboard', ['user' => auth()->user()]);
+	})->where('any', '.*');
 
 });
 
