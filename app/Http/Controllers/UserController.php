@@ -23,10 +23,9 @@ class UserController extends Controller
 
 		if (Auth::attempt($credentials)) {
 			$request->session()->regenerate();
-			return response()->json(["status"=>"success"]);
+			return redirect()->route('dashboard');
 		}
-		return response()->json(["status"=>"err"], 403);
-
+		return redirect()->back()->withErrors(['message'=>'Неверный логин или пароль']);
 	}
 
 	public function create() {
