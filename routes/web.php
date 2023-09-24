@@ -13,11 +13,23 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/dashboard{any}', function(){
-	return view('dashboard');
-})->where('any', '.*')->name('dashboard');
-Route::get('/login', [UserController::class, 'login'])->name('login');
+
+Route::middleware('auth:sanctum')->group(function () {
+
+	Route::get('/dashboard', function() {
+		return view('dashboard');
+	})->name('dashboard');
+
+	Route::get('/dashboard/{any}', function() {
+		return view('dashboard');
+	})->where('any', '.*');
+
+});
+
+Route::get('/login', [UserController::class, 'login'])->name('login')->middleware('guest');
 Route::post('/login', [UserController::class, 'auth']);
+
 Route::get('/register', [UserController::class, 'create'])->name('register');
 Route::post('/register', [UserController::class, 'store']);
-Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
+Route::get('/logout', [UserController::class, 'logout'])->name('logout')->middleware('auth');
