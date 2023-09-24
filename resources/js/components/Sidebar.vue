@@ -1,5 +1,19 @@
 <script setup>
+	import axios from 'axios';
+	import { ref } from 'vue'
+
 	const props = defineProps(['user']);
+	const events = ref(null);
+	function getEvents() {
+		axios.get('/api/events')
+			.then(response => {
+				events.value = response.data.result
+			})
+	}
+	getEvents();
+	setInterval(() => {
+		getEvents();
+	}, 30*1000);
 </script>
 <template>
 	<aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -22,12 +36,10 @@
 				<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 					<!-- Add icons to the links using the .nav-icon class
 							 with font-awesome or any other icon font library -->
-					<li class="nav-item">
-						<router-link to="/dashboard/event/1" class="nav-link">
+					<li v-if="events" v-for="event in events" class="nav-item">
+						<router-link :to="`/dashboard/event/${event.id}`" class="nav-link">
 							<i class="nav-icon fas fa-th"></i>
-							<p>
-								Simple Link
-							</p>
+							<p>{{ event.title }}</p>
 						</router-link>
 					</li>
 				</ul>
