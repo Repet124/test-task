@@ -1,2 +1,2 @@
-import './dashboard.js';
 import './bootstrap';
+import './dashboard.js';
