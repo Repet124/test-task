@@ -5,6 +5,7 @@
 @section('form')
 
 	<form method="POST" action="/register" class="col-5">
+		@csrf
 		<div class="mb-3">
 			<label for="inputLogin1" class="form-label">Логин пользователя</label>
 			<input required name="login" type="text" class="form-control" id="inputLogin1" value={{old('login')}}>
