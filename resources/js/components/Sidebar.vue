@@ -1,12 +1,12 @@
 <script setup>
 	import axios from 'axios';
-	import { ref, computed } from 'vue'
+	import { ref, computed, inject } from 'vue'
 
-	const props = defineProps(['user']);
+	const user = inject('user');
 	const events = ref([]);
 
 	const myEvents = computed(() => {
-		return events.value.filter(event => event.creator.id === props.user.id);
+		return events.value.filter(event => event.creator.id === user.id);
 	});
 
 

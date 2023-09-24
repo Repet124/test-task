@@ -7,7 +7,7 @@ import Event from './components/Event.vue';
 
 const routes = [
 	{path: '/dashboard', component: Event},
-	{path: '/dashboard/event/:id', component: Event}
+	{path: '/dashboard/event/:id', component: Event, props: true}
 ];
 
 const router = createRouter({

@@ -2,7 +2,10 @@
 	import Header from './components/Header.vue';
 	import Sidebar from './components/Sidebar.vue';
 
+	import { provide } from 'vue';
+
 	const props = defineProps(['user']);
+	provide('user', props.user);
 </script>
 
 <template>
@@ -11,7 +14,7 @@
 	<!-- /.navbar -->
 
 	<!-- Main Sidebar Container -->
-	<Sidebar :user="user"/>
+	<Sidebar/>
 
 	<!-- Content Wrapper. Contains page content -->
 	<router-view></router-view>
