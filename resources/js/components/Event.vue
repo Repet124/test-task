@@ -15,19 +15,33 @@
 
 	watch(
 		() => props.id,
-		(id) => {
-			getEvent(id)
+		() => {
+			getEvent()
 		}
 	)
 
-	function getEvent(id) {
+	function involve() {
+		axios.get('/api/events/'+props.id+'/involve')
+			.then(response => {
+				getEvent();
+			})
+	}
+
+	function leave() {
+		axios.get('/api/events/'+props.id+'/leave')
+			.then(response => {
+				getEvent();
+			})
+	}
+
+	function getEvent() {
 		event.value = null;
-		axios.get('/api/events/'+id)
+		axios.get('/api/events/'+props.id)
 			.then(response => {
 				event.value = response.data.result
 			})
 	}
-	getEvent(props.id);
+	getEvent();
 </script>
 
 <template>
@@ -80,8 +94,8 @@
 							</div>
 						</div>
 
-						<button v-if="isMyEvent" class="btn btn-danger">Отказаться от участия</button>
-						<button v-else class="btn btn-primary">Принять участие</button>
+						<button @click="leave" v-if="isMyEvent" class="btn btn-danger">Отказаться от участия</button>
+						<button @click="involve" v-else class="btn btn-primary">Принять участие</button>
 					</div>
 				</div>
 			</div>
