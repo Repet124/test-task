@@ -43,7 +43,7 @@
 			})
 	}
 
-	function getEvent() {
+	function deleteEvent() {
 		event.value = null;
 		axios.delete('/api/events/'+props.id)
 			.then(response => {

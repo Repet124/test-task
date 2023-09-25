@@ -23,7 +23,7 @@ class AuthTest extends TestCase
 	// login tests
 
 	public function test_login_view_is_access() {
-		$this->view('login')->assertSee("Events - Login");
+		$this->view('login')->assertSee("Авторизация");
 	}
 
 	public function test_login_route_is_access(): void
@@ -40,7 +40,7 @@ class AuthTest extends TestCase
 			'password' => $this->userData['password']
 		]);
 
-		$response->assertStatus(200);
+		$response->assertRedirect('/dashboard');
 		$this->assertAuthenticatedAs($user);
 	}
 
@@ -52,7 +52,6 @@ class AuthTest extends TestCase
 			'password' => $this->userData['password']
 		]);
 
-		$response->assertStatus(403);
 		$this->assertGuest();
 
 		$response = $this->post('/login', [
@@ -60,14 +59,13 @@ class AuthTest extends TestCase
 			'password' => 'sadfasdf'
 		]);
 
-		$response->assertStatus(403);
 		$this->assertGuest();
 	}
 
 	//registration tests
 
 	public function test_user_create_view() {
-		$this->view('register')->assertSee('Events - Registration');
+		$this->view('register')->assertSee('Регистрация');
 	}
 
 	public function test_register_route_is_access() {

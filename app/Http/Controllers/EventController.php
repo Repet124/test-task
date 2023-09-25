@@ -20,7 +20,7 @@ class EventController extends Controller
 	public function show($id) {
 		return response()->json([
 			'err' => null,
-			'result' => Event::with('members')->where('id', $id)->first()
+			'result' => Event::with(['creator','members'])->where('id', $id)->first()
 		]);
 	}
 

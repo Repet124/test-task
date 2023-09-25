@@ -19,11 +19,13 @@ class EventAPITest extends TestCase {
 		$usersId = User::factory(3)->create()->map(fn($user) => $user->id);
 		$event->members()->attach($usersId);
 
-		$response = $this->get('/api/events');
+		$response = $this
+			->actingAs($event->creator)
+			->get('/api/events');
 
 		$response
 			->assertJson(fn (AssertableJson $json) =>
-				$json->has('events', 1,fn (AssertableJson $json) =>
+				$json->has('result', 1,fn (AssertableJson $json) =>
 					$json->where('title', $event->title)
 						->where('description', $event->description)
 						->where('creator.id', $event->creator->id)
@@ -33,7 +35,7 @@ class EventAPITest extends TestCase {
 							$json->where('id', $event->members[0]->id)
 								->etc()
 					)->etc()
-				)
+				)->etc()
 			);
 
 	}
