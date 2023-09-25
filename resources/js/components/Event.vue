@@ -2,7 +2,7 @@
 	import Title from './Title.vue';
 
 	import axios from 'axios';
-	import { ref, watch, computed, inject} from 'vue'
+	import { ref, watch, computed, inject, onUnmounted} from 'vue'
 
 	const props = defineProps(['id']);
 	const event = ref(null);
@@ -42,6 +42,14 @@
 			})
 	}
 	getEvent();
+	let interval = setInterval(() => {
+		getEvent();
+	}, 30*1000);
+
+	onUnmounted(() => {
+		clearInterval(interval)
+	});
+
 </script>
 
 <template>
@@ -88,7 +96,9 @@
 							<div class="card-body">
 								<ul v-if="event.members.length" class="list-group list-group-flush">
 									<li v-for="member in event.members" class="list-group-item">
-										{{ member.last_name }} {{ member.first_name }}
+										<router-link :to="`/dashboard/users/${member.id}`">
+											{{ member.last_name }} {{ member.first_name }}
+										</router-link>
 									</li>
 								</ul>
 							</div>

@@ -54,4 +54,13 @@ class UserController extends Controller
 		return redirect()->route('login');
 	}
 
+	public function show(User $user) {
+		if ($user) {
+			return response()->json([
+				'err' => null,
+				'result' => $user
+			]);
+		}
+	}
+
 }

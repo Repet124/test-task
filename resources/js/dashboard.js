@@ -5,10 +5,12 @@ import App from './App.vue';
 
 import Event from './components/Event.vue';
 import Main from './components/Main.vue';
+import User from './components/User.vue';
 
 const routes = [
 	{path: '/dashboard', component: Main},
-	{path: '/dashboard/event/:id', component: Event, props: true}
+	{path: '/dashboard/event/:id', component: Event, props: true},
+	{path: '/dashboard/users/:id', component: User, props: true}
 ];
 
 const router = createRouter({

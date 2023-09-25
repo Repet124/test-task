@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/events/{event}/involve', [EventController::class, 'involve'])->name('event-involve');
 	Route::get('/events/{event}/leave', [EventController::class, 'leave'])->name('event-leave');
 
+	Route::get('/users/{user}', [UserController::class, 'show'])->name('user-show');
 });

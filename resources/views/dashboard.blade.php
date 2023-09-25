@@ -16,10 +16,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ Vite::asset('node_modules/admin-lte/dist/css/adminlte.min.css') }}">
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini" >
 
 <!-- ./wrapper -->
-<div id="app" class="wrapper" data-user="{{json_encode($user)}}"></div>
+<div id="app" class="wrapper"data-user="{{json_encode($user)}}"></div>
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->

@@ -17,7 +17,6 @@
 			.then(response => {
 				events.value = null;
 				events.value = response.data.result
-				console.log('test')
 			})
 	}
 	getEvents();
