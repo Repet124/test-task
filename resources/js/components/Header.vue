@@ -6,7 +6,8 @@
 			<!-- Navbar Search -->
 			<li class="nav-item">
 				<a class="nav-link" href="/logout" role="button">
-					<i class="fas fa-sign-out-alt"></i>
+					Logout
+					<i class="px-2 fas fa-sign-out-alt"></i>
 				</a>
 			</li>
 

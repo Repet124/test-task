@@ -4,9 +4,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 
 import Event from './components/Event.vue';
+import Main from './components/Main.vue';
 
 const routes = [
-	{path: '/dashboard', component: Event},
+	{path: '/dashboard', component: Main},
 	{path: '/dashboard/event/:id', component: Event, props: true}
 ];
 
