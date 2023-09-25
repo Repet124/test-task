@@ -6,14 +6,18 @@
 	const events = ref([]);
 
 	const myEvents = computed(() => {
-		return events.value.filter(event => event.creator.id === user.id);
+		return events.value.filter(event => {
+			return event.members.find(member => member.id === user.id);
+		});
 	});
 
 
 	function getEvents() {
 		axios.get('/api/events')
 			.then(response => {
+				events.value = null;
 				events.value = response.data.result
+				console.log('test')
 			})
 	}
 	getEvents();
