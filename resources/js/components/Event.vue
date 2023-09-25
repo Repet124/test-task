@@ -3,6 +3,7 @@
 
 	import axios from 'axios';
 	import { ref, watch, computed, inject, onUnmounted} from 'vue'
+	import { useRouter } from 'vue-router'
 
 	const props = defineProps(['id']);
 	const event = ref(null);
@@ -39,6 +40,16 @@
 		axios.get('/api/events/'+props.id)
 			.then(response => {
 				event.value = response.data.result
+			})
+	}
+
+	function getEvent() {
+		event.value = null;
+		axios.delete('/api/events/'+props.id)
+			.then(response => {
+				if (!response.data.err) {
+					useRouter().push('/dashboard');
+				}
 			})
 	}
 	getEvent();
@@ -106,6 +117,7 @@
 
 						<button @click="leave" v-if="isMyEvent" class="btn btn-danger">Отказаться от участия</button>
 						<button @click="involve" v-else class="btn btn-primary">Принять участие</button>
+						<button @click="deleteEvent" v-if="event.creator.id === user.id" class="btn btn-primary">Удалить событие</button>
 					</div>
 				</div>
 			</div>
