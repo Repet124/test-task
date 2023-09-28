@@ -29,8 +29,20 @@ class TestingSeeder extends Seeder
 			->addRandomCountEvents(from: 0, to: 3)
 			->create();
 
-		//test user involvments into other user event
-		Event::where('creator_id', '!=', $testUser->id)->first()->members()->attach($testUser->id);
+		// seeding members for events
+		Event::all()->each(function($event) {
+			$this->assignMembersForEvent($event);
+		});
 
+	}
+
+	protected function assignMembersForEvent($event, $from=0, $to=5) {
+		$event
+			->members()
+			->attach(
+				User::all() // BAD PRACTIC!!! MUST BE SINGLETON!!! It was maked for a code reading usefully
+					->random(rand($from, $to)) // Users for that event
+					->map(fn(User $user) => $user->id) // users collection to users id collection
+			);
 	}
 }
