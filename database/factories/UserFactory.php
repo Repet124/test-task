@@ -37,10 +37,9 @@ class UserFactory extends Factory
 	}
 
 	public function addRandomCountEvents($from, $to): Factory {
-		$rand = rand($from, $to);
 
 		return $this->afterCreating(
-			fn (User $user) => Event::factory()->count($rand)->for($user)->create()
+			fn (User $user) => Event::factory()->count(rand($from, $to))->for($user, 'creator')->create()
 		);
 	}
 

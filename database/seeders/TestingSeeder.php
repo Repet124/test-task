@@ -21,7 +21,7 @@ class TestingSeeder extends Seeder
 			->create();
 
 		// test user involvments into self last event
-		$testUser->events->last()->members()->attach($testUser);
+		$testUser->events->last()->members()->attach($testUser->id);
 
 		// creating users with events (random count)
 		User::factory()
@@ -30,7 +30,7 @@ class TestingSeeder extends Seeder
 			->create();
 
 		//test user involvments into other user event
-		Event::whereNot('creator_id', $testUser->id)->first()->members()->attach($testUser);
+		Event::where('creator_id', '!=', $testUser->id)->first()->members()->attach($testUser->id);
 
 	}
 }
