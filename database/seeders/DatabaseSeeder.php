@@ -15,13 +15,6 @@ class DatabaseSeeder extends Seeder
 	 */
 	public function run(): void
 	{
-		// User::create([
-		// 	'login' => 'test',
-		// 	'first_name' => 'test',
-		// 	'last_name' => 'test',
-		// 	'password' => 'password'
-		// ]);
-		// Event::factory(10)->create();
 		$this->call([
 			TestingSeeder::class
 		]);

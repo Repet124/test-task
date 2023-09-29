@@ -2,23 +2,18 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-
-use Illuminate\Support\Facades\Hash;
-
 use App\Models\User;
+use Database\Seeders\TestingSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
 	use RefreshDatabase;
 
-	protected $userData = [
-		'login' => 'test_login',
-		'first_name' => 'test_first_name',
-		'last_name' => 'test_last_name',
-		'password' => 'test_password',
-	];
+	protected $seed = true;
+	protected $seeder = TestingSeeder::class;
 
 	// login tests
 
@@ -33,29 +28,27 @@ class AuthTest extends TestCase
 	}
 
 	public function test_success_authorization() {
-		$user = $this->createUser();
 
 		$response = $this->post('/login', [
-			'login' => $user->login,
-			'password' => $this->userData['password']
+			'login' => 'test_login',
+			'password' => 'password'
 		]);
 
-		$response->assertRedirect('/dashboard');
-		$this->assertAuthenticatedAs($user);
+		$response->assertRedirectToRoute('dashboard');
+		$this->assertAuthenticatedAs($this->getTestUser());
 	}
 
 	public function test_fail_authorization() {
-		$user = $this->createUser();
 
 		$response = $this->post('/login', [
 			'login' => 'abracadabra',
-			'password' => $this->userData['password']
+			'password' => 'password'
 		]);
 
 		$this->assertGuest();
 
 		$response = $this->post('/login', [
-			'login' => $user->login,
+			'login' => $this->getTestUser()->login,
 			'password' => 'sadfasdf'
 		]);
 
@@ -75,38 +68,32 @@ class AuthTest extends TestCase
 
 	public function test_success_user_create() {
 
-		$response = $this->post('/register', $this->userData);
+		$newUserData = [
+			'login' => 'some_login',
+			'first_name' => 'someName',
+			'last_name' => 'someLastName',
+			'password' => 'test_password'
+		];
 
-		$response->assertRedirect('/login');
+		$this->assertDatabaseMissing('users', $newUserData);
 
-		$user = User::where('login', $this->userData['login'])->first();
+		$response = $this->post('/register', $newUserData);
 
-		$this->assertEquals($user->login, $this->userData['login']);
-		$this->assertEquals($user->first_name, $this->userData['first_name']);
-		$this->assertEquals($user->last_name, $this->userData['last_name']);
-		$this->assertTrue(Hash::check($this->userData['password'],$user->password));
+		$response->assertRedirectToRoute('login');
+		unset($newUserData['password']);
+		$this->assertDatabaseHas('users', $newUserData);
 
 	}
 
 	// logout
 
 	public function test_logout() {
-		$user = $this->createUser();
 
 		$response = $this
-			->actingAs($user)
+			->actingAs($this->getTestUser())
 			->get('/logout');
 
 		$response->assertRedirect('/login');
 		$this->assertGuest();
-	}
-
-	protected function createUser(): User {
-		return User::create([
-			'login' => $this->userData['login'],
-			'first_name' => $this->userData['first_name'],
-			'last_name' => $this->userData['last_name'],
-			'password' => $this->userData['password']
-		]);
 	}
 }
