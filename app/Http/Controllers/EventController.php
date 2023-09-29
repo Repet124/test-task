@@ -12,14 +12,14 @@ class EventController extends Controller
 	 */
 	public function index() {
 		return response()->json([
-			'err' => null,
+			'error' => null,
 			'result' => Event::with(['creator', 'members'])->get()
 		]);
 	}
 
 	public function show($id) {
 		return response()->json([
-			'err' => null,
+			'error' => null,
 			'result' => Event::with(['creator','members'])->where('id', $id)->first()
 		]);
 	}

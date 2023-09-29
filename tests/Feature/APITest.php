@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Event;
 use App\Models\User;
+use Database\Seeders\TestingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -13,30 +14,21 @@ class EventAPITest extends TestCase {
 
 	use RefreshDatabase;
 
+	protected $seed = true;
+	protected $seeder = TestingSeeder::class;
+
 	public function test_getting_events_list() {
 
-		$event = Event::factory()->create()->first();
-		$usersId = User::factory(3)->create()->map(fn($user) => $user->id);
-		$event->members()->attach($usersId);
+		$user = $this->getTestUser();
 
 		$response = $this
-			->actingAs($event->creator)
+			->actingAs($user)
 			->get('/api/events');
 
-		$response
-			->assertJson(fn (AssertableJson $json) =>
-				$json->has('result', 1,fn (AssertableJson $json) =>
-					$json->where('title', $event->title)
-						->where('description', $event->description)
-						->where('creator.id', $event->creator->id)
-						->where('creator.first_name', $event->creator->first_name)
-						->where('creator.last_name', $event->creator->last_name)
-						->has('members', 3, fn (AssertableJson $json) =>
-							$json->where('id', $event->members[0]->id)
-								->etc()
-					)->etc()
-				)->etc()
-			);
+		$response->assertJson([
+			'error' => null,
+			'result' => Event::with(['creator', 'members'])->get()->toArray()
+		]);
 
 	}
 
