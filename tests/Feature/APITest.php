@@ -60,6 +60,7 @@ class EventAPITest extends TestCase {
 				'descripton' => 'test_description',
 			]);
 
+			$this->errWithMessage($response, 'Некорректные данные пользователя');
 			$this->assertDatabaseCount('events', $eventsCount);
 	}
 
