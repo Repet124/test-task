@@ -33,22 +33,21 @@ class EventAPITest extends TestCase {
 	}
 
 	public function test_success_creating_event() {
-		$user = User::factory()->create();
+		$newEventData = [
+			'title' => 'test_title',
+			'description' => 'test_description',
+		];
+		$user = $this->getTestUser();
 
 		$response = $this
 			->actingAs($user)
-			->post('/api/events',[
-				'title' => 'test_title',
-				'description' => 'test_description',
-			]);
+			->post('/api/events', $newEventData);
 
 		$response->assertOk();
-
-		$event = Event::all()->first();
-
-		$this->assertEquals($event->title, 'test_title');
-		$this->assertEquals($event->description, 'test_description');
-		$this->assertEquals($event->creator->id, $user->id);
+		$this->assertDatabaseHas('events', array_merge(
+			$newEventData,
+			['creator_id' => $user->id]
+		));
 	}
 
 	public function test_fail_creating_event() {
