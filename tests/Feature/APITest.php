@@ -8,6 +8,7 @@ use Database\Seeders\TestingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class EventAPITest extends TestCase {
@@ -53,15 +54,20 @@ class EventAPITest extends TestCase {
 	public function test_fail_creating_event() {
 		$eventsCount = Event::all()->count();
 
+		Sanctum::actingAs(
+			$this->getTestUser(),
+			['*']
+		);
+
 		$response = $this
-			->actingAs($this->getTestUser())
-			->post('/api/events',[
+			->postJson('/api/events',[
 				'title' => '',
-				'descripton' => 'test_description',
+				'description' => 'test_description',
 			]);
 
-			$this->errWithMessage($response, 'Некорректные данные пользователя');
-			$this->assertDatabaseCount('events', $eventsCount);
+
+		$response->assertUnprocessable();
+		$this->assertDatabaseCount('events', $eventsCount);
 	}
 
 	public function test_destroy_event() {
