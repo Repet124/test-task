@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventStoreRequest;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
@@ -27,11 +28,8 @@ class EventController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(Request $request) {
-		$credentials = $request->validate([
-			'title' => 'required|max:255|unique:events',
-			'description' => 'required'
-		]);
+	public function store(EventStoreRequest $request) {
+		$credentials = $request->validated();
 
 		$credentials['creator_id'] = auth()->user()->id;
 
