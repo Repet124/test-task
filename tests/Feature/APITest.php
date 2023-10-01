@@ -94,8 +94,10 @@ class APITest extends TestCase {
 		$response = $this
 			->deleteJson("/api/events/$event->id");
 
-		$response->assertJson([
-			'errors' => 'creator id dont match with user'
+		$response->assertForbidden();
+		$response->assertJsonPath('message', 'Данное действие не доступно для вашего пользователя');
+		$this->assertDatabaseHas('events', [
+			'id' => $event->id
 		]);
 	}
 

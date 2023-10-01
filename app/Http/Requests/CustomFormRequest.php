@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use App\Exceptions\CustomValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class CustomFormRequest extends FormRequest
 {
@@ -21,5 +22,16 @@ class CustomFormRequest extends FormRequest
 		throw (new CustomValidationException($validator))
 					->errorBag($this->errorBag)
 					->redirectTo($this->getRedirectUrl());
+	}
+	/**
+	 * Handle a failed authorization attempt.
+	 *
+	 * @return void
+	 *
+	 * @throws \Illuminate\Auth\Access\AuthorizationException
+	 */
+	protected function failedAuthorization()
+	{
+		throw new AuthorizationException('Данное действие не доступно для вашего пользователя');
 	}
 }
