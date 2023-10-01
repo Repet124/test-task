@@ -21,7 +21,6 @@ class EventController extends Controller
 
 	public function show($id) {
 		return response()->json([
-			'errors' => null,
 			'result' => Event::with(['creator','members'])->where('id', $id)->first()
 		]);
 	}
@@ -35,7 +34,6 @@ class EventController extends Controller
 
 		if (Event::create($credentials)) {
 			return response()->json([
-				'errors' => null,
 				'result' => true
 			]);
 		}
@@ -49,44 +47,21 @@ class EventController extends Controller
 		$event->delete();
 
 		return response()->json([
-			'errors'=> null,
 			'result' => true
 		]);
-		// return response()->json([
-		// 	'error' => 'creator id dont match with user',
-		// 	'result' => false
-		// ]);
 	}
 
 	public function involve(Event $event) {
-		$user = auth()->user();
-
-		if($event->members->contains($user)) {
-			return response()->json([
-				'error' => 'you are already involvments',
-				'result' => false
-			]);
-		}
-		$event->members()->attach($user->id);
+		$event->members()->attach(auth()->user());
 		return response()->json([
-			'error' => null,
 			'result' => true
 		]);
 	}
 
 	public function leave(Event $event) {
-		$user = auth()->user();
-
-		if($event->members->contains($user)) {
-			$event->members()->detach($user->id);
-			return response()->json([
-				'error' => null,
-				'result' => true
-			]);
-		}
+		$event->members()->detach(auth()->user());
 		return response()->json([
-			'error' => 'you are not involments in event',
-			'result' => false
+			'result' => true
 		]);
 	}
 }
