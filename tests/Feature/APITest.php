@@ -115,15 +115,19 @@ class APITest extends TestCase {
 	}
 
 	public function test_to_dismiss_user_from_event() {
-		$event = Event::factory()->create();
-		$otherUser = User::factory()->create();
-		$event->members()->attach($otherUser->id);
+		$user = $this->getTestUser();
+		$event = $user->involves()->first();
+
+		Sanctum::actingAs($user, ['*']);
 
 		$response = $this
-			->actingAs($otherUser)
 			->get("/api/events/$event->id/leave");
 
-		$this->assertEquals($event->members->count(), 0);
+		$response->assertOk();
+		$this->assertDatabaseMissing('event_member', [
+			'event_id' => $event->id,
+			'member_id' => $user->id
+		]);
 	}
 
 }
