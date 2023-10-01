@@ -11,7 +11,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class EventAPITest extends TestCase {
+class APITest extends TestCase {
 
 	use RefreshDatabase;
 
@@ -68,17 +68,20 @@ class EventAPITest extends TestCase {
 	}
 
 	public function test_destroy_event() {
-		$event = Event::factory()->create();
+		$event = Event::all()->first();
+
+		Sanctum::actingAs($event->creator, ['*']);
 
 		$response = $this
-			->actingAs($event->creator)
-			->delete("/api/events/$event->id");
+			->deleteJson("/api/events/$event->id");
 
 		$response->assertJson([
-			'error' => null
+			'errors' => null
 		]);
 
-		$this->assertEquals(Event::all()->count(), 0);
+		$this->assertDatabaseMissing('events', [
+			'id' => $event->id
+		]);
 	}
 
 	public function test_fail_destroy_event() {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventDestroyRequest;
 use App\Http\Requests\EventStoreRequest;
 use App\Models\Event;
 use Illuminate\Http\Request;
@@ -13,14 +14,14 @@ class EventController extends Controller
 	 */
 	public function index() {
 		return response()->json([
-			'error' => null,
+			'errors' => null,
 			'result' => Event::with(['creator', 'members'])->get()
 		]);
 	}
 
 	public function show($id) {
 		return response()->json([
-			'error' => null,
+			'errors' => null,
 			'result' => Event::with(['creator','members'])->where('id', $id)->first()
 		]);
 	}
@@ -34,7 +35,7 @@ class EventController extends Controller
 
 		if (Event::create($credentials)) {
 			return response()->json([
-				'error' => null,
+				'errors' => null,
 				'result' => true
 			]);
 		}
@@ -43,18 +44,18 @@ class EventController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Event $event) {
-		if (auth()->user()->id === $event->creator->id) {
-			$event->delete();
-			return response()->json([
-				'error'=> null,
-				'result' => true
-			]);
-		}
+	public function destroy(Event $event, EventDestroyRequest $request) {
+
+		$event->delete();
+
 		return response()->json([
-			'error' => 'creator id dont match with user',
-			'result' => false
+			'errors'=> null,
+			'result' => true
 		]);
+		// return response()->json([
+		// 	'error' => 'creator id dont match with user',
+		// 	'result' => false
+		// ]);
 	}
 
 	public function involve(Event $event) {
