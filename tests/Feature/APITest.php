@@ -26,7 +26,6 @@ class APITest extends TestCase {
 			->getJson('/api/events');
 
 		$response->assertJson([
-			'errors' => null,
 			'result' => Event::with(['creator', 'members'])->get()->toArray()
 		]);
 
@@ -77,7 +76,7 @@ class APITest extends TestCase {
 			->deleteJson("/api/events/$event->id");
 
 		$response->assertJson([
-			'errors' => null
+			'result' => true
 		]);
 
 		$this->assertDatabaseMissing('events', [
