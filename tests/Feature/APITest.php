@@ -102,14 +102,16 @@ class APITest extends TestCase {
 	}
 
 	public function test_request_for_involving_user_in_event() {
-		$event = Event::factory()->create();
-		$otherUser = User::factory()->create();
+		$event = Event::all()->first();
+		$user = User::factory()->create();
+
+		Sanctum::actingAs($user, ['*']);
 
 		$response = $this
-			->actingAs($otherUser)
-			->get("/api/events/$event->id/involve");
+			->getJson("/api/events/$event->id/involve");
 
-		$this->assertEquals($event->members->last()->id, $otherUser->id);
+		$response->assertOk();
+		$this->assertEquals($event->members->last()->id, $user->id);
 	}
 
 	public function test_to_dismiss_user_from_event() {
