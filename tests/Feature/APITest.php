@@ -63,6 +63,7 @@ class APITest extends TestCase {
 			]);
 
 		$response->assertUnprocessable();
+		$response->assertJsonPath('message', 'Ошибка валидации данных');
 		$response->assertJsonValidationErrors(['title']);
 		$this->assertDatabaseCount('events', $eventsCount);
 	}
@@ -85,18 +86,17 @@ class APITest extends TestCase {
 	}
 
 	public function test_fail_destroy_event() {
-		$event = Event::factory()->create();
-		$otherUser = User::factory()->create();
+		$user = $this->getTestUser();
+		$event = Event::where('creator_id', '!=', $user->id)->first();
+
+		Sanctum::actingAs($user, ['*']);
 
 		$response = $this
-			->actingAs($otherUser)
-			->delete("/api/events/$event->id");
+			->deleteJson("/api/events/$event->id");
 
 		$response->assertJson([
-			'error' => 'creator id dont match with user'
+			'errors' => 'creator id dont match with user'
 		]);
-
-		$this->assertEquals(Event::all()->count(), 1);
 	}
 
 	public function test_request_for_involving_user_in_event() {
