@@ -14,6 +14,12 @@ class EventStoreRequest extends FormRequest
 		return true;
 	}
 
+	protected function prepareForValidation(): void {
+		$this->merge([
+			'creator_id' => $this->user()->id
+		]);
+	}
+
 	/**
 	 * Get the validation rules that apply to the request.
 	 *
@@ -23,7 +29,17 @@ class EventStoreRequest extends FormRequest
 	{
 		return [
 			'title' => 'required|max:255|unique:events',
-			'description' => 'required'
+			'description' => 'required',
+			'creator_id' => 'required|numeric'
+		];
+	}
+
+	public function messages(): array {
+		return [
+			'title.required' => 'Остутствует заголовок',
+			'title.max' => 'Превышена длина заголовка',
+			'title.unique' => 'Событие с таким заголовком уже существует',
+			'description.required' => 'Остутствует описание'
 		];
 	}
 }

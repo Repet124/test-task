@@ -20,14 +20,13 @@ class EventAPITest extends TestCase {
 
 	public function test_getting_events_list() {
 
-		$user = $this->getTestUser();
+		Sanctum::actingAs($this->getTestUser(), ['*']);;
 
 		$response = $this
-			->actingAs($user)
-			->get('/api/events');
+			->getJson('/api/events');
 
 		$response->assertJson([
-			'error' => null,
+			'errors' => null,
 			'result' => Event::with(['creator', 'members'])->get()->toArray()
 		]);
 
@@ -38,11 +37,12 @@ class EventAPITest extends TestCase {
 			'title' => 'test_title',
 			'description' => 'test_description',
 		];
+
 		$user = $this->getTestUser();
+		Sanctum::actingAs($user, ['*']);
 
 		$response = $this
-			->actingAs($user)
-			->post('/api/events', $newEventData);
+			->postJson('/api/events', $newEventData);
 
 		$response->assertOk();
 		$this->assertDatabaseHas('events', array_merge(
@@ -54,10 +54,7 @@ class EventAPITest extends TestCase {
 	public function test_fail_creating_event() {
 		$eventsCount = Event::all()->count();
 
-		Sanctum::actingAs(
-			$this->getTestUser(),
-			['*']
-		);
+		Sanctum::actingAs($this->getTestUser(), ['*']);
 
 		$response = $this
 			->postJson('/api/events',[
@@ -65,8 +62,8 @@ class EventAPITest extends TestCase {
 				'description' => 'test_description',
 			]);
 
-
 		$response->assertUnprocessable();
+		$response->assertJsonValidationErrors(['title']);
 		$this->assertDatabaseCount('events', $eventsCount);
 	}
 

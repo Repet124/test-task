@@ -29,9 +29,8 @@ class EventController extends Controller
 	 * Store a newly created resource in storage.
 	 */
 	public function store(EventStoreRequest $request) {
-		$credentials = $request->validated();
 
-		$credentials['creator_id'] = auth()->user()->id;
+		$credentials = $request->validated();
 
 		if (Event::create($credentials)) {
 			return response()->json([

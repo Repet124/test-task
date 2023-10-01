@@ -14,24 +14,17 @@ abstract class TestCase extends BaseTestCase
 		return User::where('login', 'test_login')->first();
 	}
 
-	protected function notAuth($response){
-		$response->assertStatus(403);
+	protected function assertsNotAuth($response){
+		$response->assertStatus(401);
 		$response->assertJson([
-			'error' => 'Пользователь не авторизован'
+			'message' => 'Пользователь не авторизован'
 		]);
 	}
 
-	protected function notFoundWithMessage($response, $message='Запрашиваемый ресурс не найден') {
+	protected function assertsNotFoundWithMessage($response, $message='Запрашиваемый ресурс не найден') {
 		$response->assertStatus(404);
 		$response->assertJson([
-			'error' => $message
-		]);
-	}
-
-	protected function errWithMessage($response, $message) {
-		$response->assertOk();
-		$response->assertJson([
-			'error' => $message
+			'message' => $message
 		]);
 	}
 }
