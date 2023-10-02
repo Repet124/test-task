@@ -1,24 +1,27 @@
 <script setup>
-	import Header from './components/Header.vue';
-	import Sidebar from './components/Sidebar.vue';
-
 	import axios from 'axios';
 	import { provide } from 'vue';
 
+	import Header from './components/Header.vue';
+	import Sidebar from './components/Sidebar.vue';
+	import Modal from './components/Modal.vue';
+
+	import API from './API.js';
+
 	const props = defineProps(['user']);
 
-	function requestToAPI() {
-
-	}
-
 	function toAPI(url) {
-
+		return new API(url)
+			.callback();
 	}
+
 	provide('user', props.user);
+	provide('toAPI', toAPI);
 </script>
 
 <template>
 	<!-- Navbar -->
+	<Modal />
 	<Header />
 	<!-- /.navbar -->
 

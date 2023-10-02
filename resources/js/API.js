@@ -1,18 +1,13 @@
 import axios from 'axios';
 
-class API {
+export default class API {
 
-	constructor(url, callbackForSuccess=null, callbackForError=null) {
+	constructor(url) {
+		this._url = url;
 		this._method = null;
 		this._data = null;
-		this._callbackForSuccess = callbackForSuccess;
-		this._callbackForError = callbackForError;
-	}
-
-	_request(data) {
-		axios.get('/sanctum/csrf-cookie').then(response => {
-
-		});
+		this._callbacksForSuccess = [];
+		this._callbacksForError = [];
 	}
 
 	_setData(data) {
@@ -41,12 +36,31 @@ class API {
 
 	callback(fn) {
 		if (fn typeof 'function') {
-			this._callbackForSuccess = fn;
+			this._callbacksForSuccess.push(fn);
+		}
+		return this;
+	}
+
+	fail(fn) {
+		if (fn typeof 'function') {
+			this._callbacksForError.push(fn);
 		}
 		return this;
 	}
 
 	send() {
-
+		axios.get('/sanctum/csrf-cookie').then(() => {
+			axios[this._method](this._url, this._data)
+				.catch(error => {
+					this._callbacksForError.forEach(fn => {
+						fn(error);
+					})
+				})
+				.then(response => {
+					this._callbacksForSuccess.forEach(fn => {
+						fn(response);
+					})
+				});
+		});
 	}
 }
