@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-export default class API {
+class API {
 
-	constructor(url) {
-		this._url = url;
+	constructor() {
+		this._url = null;
 		this._method = null;
 		this._data = null;
 		this._callbacksForSuccess = [];
@@ -11,38 +11,41 @@ export default class API {
 	}
 
 	_setData(data) {
-		if (data typeof Object) {
+		if (typeof data === 'object') {
 			this._data = data
 		}
 	}
 
-	get(data=null) {
+	_registration(method, url, data) {
+		this._url = url;
 		this._method = 'get';
 		this._setData(data);
+	}
+
+	get(url, data=null) {
+		this._registration('get', ...arguments);
 		return this;
 	}
 
-	post(data=null) {
-		this._method = 'post';
-		this._setData(data);
+	post(url, data=null) {
+		this._registration('post', ...arguments);
 		return this;
 	}
 
-	delete(data=null) {
-		this._method = 'delete';
-		this._setData(data);
+	delete(url, data=null) {
+		this._registration('delete', ...arguments);
 		return this;
 	}
 
-	callback(fn) {
-		if (fn typeof 'function') {
+	then(fn) {
+		if (typeof fn === 'function') {
 			this._callbacksForSuccess.push(fn);
 		}
 		return this;
 	}
 
-	fail(fn) {
-		if (fn typeof 'function') {
+	catch(fn) {
+		if (typeof fn === 'function') {
 			this._callbacksForError.push(fn);
 		}
 		return this;
@@ -64,3 +67,4 @@ export default class API {
 		});
 	}
 }
+export default API;

@@ -1,14 +1,16 @@
 <script setup>
 	import Title from './Title.vue';
 
-	import axios from 'axios';
-	import { ref, watch, computed, inject, onUnmounted} from 'vue'
+	import { ref, watch, computed, inject, onMounted, onUnmounted} from 'vue'
 	import { useRouter } from 'vue-router'
 
 	const props = defineProps(['id']);
 	const event = ref(null);
+	const interval = ref();
 	const user = inject('user');
+	const API = inject('API');
 	const router = useRouter();
+
 	const isMyEvent = computed(() => {
 		return !!event.value.members.find(member => {
 			return member.id === user.id;
@@ -22,42 +24,31 @@
 		}
 	)
 
-	function involve() {
-		axios.get('/api/events/'+props.id+'/involve')
-			.then(response => {
-				getEvent();
-			})
-	}
-
-	function leave() {
-		axios.get('/api/events/'+props.id+'/leave')
-			.then(response => {
-				getEvent();
-			})
-	}
-
 	function getEvent() {
 		event.value = null;
-		axios.get('/api/events/'+props.id)
+		API().get('/api/events/'+props.id)
 			.then(response => {
 				event.value = response.data.result
 			})
+			.send()
 	}
 
 	function deleteEvent() {
 		event.value = null;
-		axios.delete('/api/events/'+props.id)
-			.then(response => {
+		API().delete('/api/events/'+props.id)
+			.then(() => {
 				router.push('/dashboard');
-			});
+			})
+			.send();
 	}
-	getEvent();
-	let interval = setInterval(() => {
-		getEvent();
-	}, 30*1000);
+	onMounted(() => {
+		interval.value = setInterval(() => {
+			getEvent();
+		}, 30*1000);
+	})
 
 	onUnmounted(() => {
-		clearInterval(interval)
+		clearInterval(interval.value);
 	});
 
 </script>
@@ -116,9 +107,29 @@
 							</div>
 						</div>
 
-						<button @click="leave" v-if="isMyEvent" class="btn btn-danger mr-2">Отказаться от участия</button>
-						<button @click="involve" v-else class="btn btn-primary mr-2">Принять участие</button>
-						<button @click="deleteEvent" v-if="event.creator.id === user.id" class="btn btn-danger mr-2">Удалить событие</button>
+						<button
+							v-if="isMyEvent"
+							@click="API().get('/api/events/'+props.id+'/leave').then(getEvent).send()"
+							class="btn btn-danger mr-2"
+						>
+							Отказаться от участия
+						</button>
+
+						<button
+							v-else
+							@click="API().get('/api/events/'+props.id+'/involve').then(getEvent).send()"
+							class="btn btn-primary mr-2"
+						>
+							Принять участие
+						</button>
+
+						<button
+							v-if="event.creator.id === user.id"
+							@click="deleteEvent"
+							class="btn btn-danger mr-2"
+						>
+							Удалить событие
+						</button>
 					</div>
 				</div>
 			</div>

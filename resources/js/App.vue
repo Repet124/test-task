@@ -1,6 +1,6 @@
 <script setup>
 	import axios from 'axios';
-	import { provide } from 'vue';
+	import { provide, ref } from 'vue';
 
 	import Header from './components/Header.vue';
 	import Sidebar from './components/Sidebar.vue';
@@ -9,19 +9,42 @@
 	import API from './API.js';
 
 	const props = defineProps(['user']);
+	const showModal = ref(false);
+	const modalHeading = ref('');
+	const modalType = ref('ok');
+	const modalMessage = ref('');
 
-	function toAPI(url) {
-		return new API(url)
-			.callback();
+	function modalShowing(heading, type, message) {
+		modalHeading.value = heading;
+		modalType.value = type;
+		modalMessage.value = message;
+		showModal.value = true;
+	}
+
+	function modalHidding() {
+		showModal.value = false;
+		modalHeading.value = '';
+		modalType.value = 'ok';
+		modalMessage.value = '';
+	}
+
+	function toAPI() {
+		return new API()
+			.catch(error => {
+				console.log('err')
+				modalShowing(error.message, 'ok');
+			});
 	}
 
 	provide('user', props.user);
-	provide('toAPI', toAPI);
+	provide('API', toAPI);
 </script>
 
 <template>
 	<!-- Navbar -->
-	<Modal />
+	<Modal v-if="showModal" :type="modalType" @close="modalHidding">
+		{{ modalMessage }}
+	</Modal>
 	<Header />
 	<!-- /.navbar -->
 

@@ -1,9 +1,10 @@
 <script setup>
-	import axios from 'axios';
 	import { ref, computed, inject } from 'vue'
 
-	const user = inject('user');
 	const events = ref([]);
+
+	const user = inject('user');
+	const API = inject('API');
 
 	const myEvents = computed(() => {
 		return events.value.filter(event => {
@@ -13,7 +14,7 @@
 
 
 	function getEvents() {
-		axios.get('/api/events')
+		API().get('/api/events')
 			.then(response => {
 				events.value = null;
 				events.value = response.data.result
