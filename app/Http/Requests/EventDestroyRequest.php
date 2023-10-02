@@ -10,7 +10,7 @@ class EventDestroyRequest extends CustomFormRequest
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return $this->user()->id === $this->event->id;
+		return $this->user()->id === $this->event->creator->id;
 	}
 
 	/**

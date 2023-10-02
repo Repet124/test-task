@@ -8,6 +8,7 @@
 	const props = defineProps(['id']);
 	const event = ref(null);
 	const user = inject('user');
+	const router = useRouter();
 	const isMyEvent = computed(() => {
 		return !!event.value.members.find(member => {
 			return member.id === user.id;
@@ -47,10 +48,8 @@
 		event.value = null;
 		axios.delete('/api/events/'+props.id)
 			.then(response => {
-				if (!response.data.err) {
-					useRouter().push('/dashboard');
-				}
-			})
+				router.push('/dashboard');
+			});
 	}
 	getEvent();
 	let interval = setInterval(() => {
@@ -97,7 +96,9 @@
 								<p class="card-text">
 									{{ event.description }}
 								</p>
-
+								<p class="card-text">
+									Автор события: {{ event.creator.first_name }} {{ event.creator.last_name }}
+								</p>
 							</div>
 						</div>
 						<div class="card">
@@ -115,9 +116,9 @@
 							</div>
 						</div>
 
-						<button @click="leave" v-if="isMyEvent" class="btn btn-danger">Отказаться от участия</button>
-						<button @click="involve" v-else class="btn btn-primary">Принять участие</button>
-						<button @click="deleteEvent" v-if="event.creator.id === user.id" class="btn btn-primary">Удалить событие</button>
+						<button @click="leave" v-if="isMyEvent" class="btn btn-danger mr-2">Отказаться от участия</button>
+						<button @click="involve" v-else class="btn btn-primary mr-2">Принять участие</button>
+						<button @click="deleteEvent" v-if="event.creator.id === user.id" class="btn btn-danger mr-2">Удалить событие</button>
 					</div>
 				</div>
 			</div>

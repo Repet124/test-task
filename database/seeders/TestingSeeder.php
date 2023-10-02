@@ -25,7 +25,7 @@ class TestingSeeder extends Seeder
 
 		// creating users with events (random count)
 		User::factory()
-			->count(10)
+			->count(4)
 			->addRandomCountEvents(from: 0, to: 3)
 			->create();
 
