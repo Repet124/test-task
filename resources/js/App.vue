@@ -2,9 +2,18 @@
 	import Header from './components/Header.vue';
 	import Sidebar from './components/Sidebar.vue';
 
+	import axios from 'axios';
 	import { provide } from 'vue';
 
 	const props = defineProps(['user']);
+
+	function requestToAPI() {
+
+	}
+
+	function toAPI(url) {
+
+	}
 	provide('user', props.user);
 </script>
 
