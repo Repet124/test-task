@@ -3,21 +3,25 @@
 	import { ref } from 'vue';
 	import { onMounted } from 'vue'
 
+	import ModalButton from './ModalButton.vue'
+
 	const props = defineProps(['type', 'heading']);
 	const emit = defineEmits(['close', 'confirm']);
 	const modal = ref(null);
+	const bootstrapModalObj = ref(null);
 
 	onMounted(() => {
-		new bootstrap.Modal(modal, {keyboard: false}).show();
+		bootstrapModalObj.value = new bootstrap.Modal(modal.value, {keyboard: false});
+		bootstrapModalObj.value.show();
 	});
 
-	function close(e) {
-		if(e.target === modalWrapper) {
-			emit('close');
-		}
+	function close() {
+		bootstrapModalObj.value.hide();
+		emit('close');
 	}
 
 	function confirm() {
+		bootstrapModalObj.value.hide();
 		emit('close');
 		emit('confirm');
 	}
@@ -34,11 +38,11 @@
 					<h5 class="modal-title">{{ heading }}</h5>
 					<button
 						type="button"
-						class="btn-close"
+						class="btn btn-danger"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						@click="$emit('close')"
-					></button>
+						@click="close"
+					><i class="fas fa-times"></i></button>
 				</div>
 				<div class="modal-body">
 					<slot />
