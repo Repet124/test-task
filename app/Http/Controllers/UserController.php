@@ -48,6 +48,12 @@ class UserController extends Controller
 		return redirect()->route('login');
 	}
 
+	public function index() {
+		return response()->json([
+			'result' => User::all()
+		]);
+	}
+
 	public function show(User $user) {
 		if ($user) {
 			return response()->json([
