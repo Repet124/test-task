@@ -1,7 +1,7 @@
 import { ref, computed, inject } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { toAPI } from './_lib.js'
 
 export const useEventsStore = defineStore('events', ()=>{
 
@@ -24,21 +24,6 @@ export const useEventsStore = defineStore('events', ()=>{
 			return events.value.find(event => event.id === id);
 		}
 	});
-
-	function toAPI(method, url, resolveCallback = null, data = null) {
-		return new Promise((resolve, reject) => {
-			axios.get('/sanctum/csrf-cookie').then(() => {
-				axios[method](url, data)
-					.catch(error => {
-						reject(error)
-					})
-					.then(response => {
-						resolveCallback(response);
-						resolve(response);
-					});
-			});
-		})
-	}
 
 	function refresh() {
 		return toAPI('get', '/api/events', response => {
