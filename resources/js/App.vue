@@ -6,9 +6,10 @@
 	import Sidebar from './components/Sidebar.vue';
 	import Modal from './components/Modal.vue';
 
-	import API from './API.js';
+	import { useEventsStore } from '@/stores/events.js';
 
-	const props = defineProps(['user']);
+	const store = useEventsStore();
+
 	const showModal = ref(false);
 	const modalHeading = ref('');
 	const modalType = ref('ok');
@@ -28,16 +29,17 @@
 		modalMessage.value = '';
 	}
 
-	function toAPI() {
-		return new API()
-			.catch(error => {
-				console.log('err')
-				modalShowing(error.message, 'ok');
-			});
-	}
+	store.$onAction(({name, store, args, after, onError}) => {
+		onError((error) => {
+			console.log('err')
+			modalShowing(error.message, 'ok');
+		})
+	});
 
-	provide('user', props.user);
-	provide('API', toAPI);
+	setInterval(() => {
+		store.refresh();
+	}, 30*1000);
+
 </script>
 
 <template>

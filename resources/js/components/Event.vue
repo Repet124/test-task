@@ -1,60 +1,27 @@
 <script setup>
 	import Title from './Title.vue';
 
-	import { ref, watch, computed, inject, onMounted, onUnmounted} from 'vue'
-	import { useRouter } from 'vue-router'
+	import { computed, inject } from 'vue'
+	import { useEventsStore } from '@/stores/events.js'
 
 	const props = defineProps(['id']);
-	const event = ref(null);
-	const interval = ref();
 	const user = inject('user');
-	const API = inject('API');
-	const router = useRouter();
+	const store = useEventsStore();
 
 	const isMyEvent = computed(() => {
-		return !!event.value.members.find(member => {
-			return member.id === user.id;
-		})
-	})
-
-	watch(
-		() => props.id,
-		() => {
-			getEvent()
+			if (!store.eventById(props.id)) {
+				return false;
+			}
+			return store.eventById(props.id).members.some(member => {
+				return member.id === Number(user.id);
+			})
 		}
 	)
-
-	function getEvent() {
-		event.value = null;
-		API().get('/api/events/'+props.id)
-			.then(response => {
-				event.value = response.data.result
-			})
-			.send()
-	}
-
-	function deleteEvent() {
-		event.value = null;
-		API().delete('/api/events/'+props.id)
-			.then(() => {
-				router.push('/dashboard');
-			})
-			.send();
-	}
-	onMounted(() => {
-		interval.value = setInterval(() => {
-			getEvent();
-		}, 30*1000);
-	})
-
-	onUnmounted(() => {
-		clearInterval(interval.value);
-	});
 
 </script>
 
 <template>
-	<div v-if="!event" class="content-wrapper">
+	<div v-if="!store.eventById(props.id)" class="content-wrapper">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-lg-6">
@@ -71,7 +38,7 @@
 	</div>
 	<div v-else class="content-wrapper">
 		<!-- Content Header (Page header) -->
-		<Title>{{ event.title }}</Title>
+		<Title>{{ store.eventById(props.id).title }}</Title>
 		<!-- /.content-header -->
 
 		<!-- Main content -->
@@ -85,10 +52,10 @@
 							</div>
 							<div class="card-body">
 								<p class="card-text">
-									{{ event.description }}
+									{{ store.eventById(props.id).description }}
 								</p>
 								<p class="card-text">
-									Автор события: {{ event.creator.first_name }} {{ event.creator.last_name }}
+									Автор события: {{ store.eventById(props.id).creator.first_name }} {{ store.eventById(props.id).creator.last_name }}
 								</p>
 							</div>
 						</div>
@@ -97,8 +64,8 @@
 								<div class="card-title">Участники</div>
 							</div>
 							<div class="card-body">
-								<ul v-if="event.members.length" class="list-group list-group-flush">
-									<li v-for="member in event.members" class="list-group-item">
+								<ul v-if="store.eventById(props.id).members.length" class="list-group list-group-flush">
+									<li v-for="member in store.eventById(props.id).members" class="list-group-item">
 										<router-link :to="`/dashboard/users/${member.id}`">
 											{{ member.last_name }} {{ member.first_name }}
 										</router-link>
@@ -109,7 +76,7 @@
 
 						<button
 							v-if="isMyEvent"
-							@click="API().get('/api/events/'+props.id+'/leave').then(getEvent).send()"
+							@click="store.leaveFromEvent(props.id)"
 							class="btn btn-danger mr-2"
 						>
 							Отказаться от участия
@@ -117,15 +84,15 @@
 
 						<button
 							v-else
-							@click="API().get('/api/events/'+props.id+'/involve').then(getEvent).send()"
+							@click="store.involveToEvent(props.id)"
 							class="btn btn-primary mr-2"
 						>
 							Принять участие
 						</button>
 
 						<button
-							v-if="event.creator.id === user.id"
-							@click="deleteEvent"
+							v-if="store.eventById(props.id).creator.id === user.id"
+							@click="store.deleteEvent(props.id)"
 							class="btn btn-danger mr-2"
 						>
 							Удалить событие
