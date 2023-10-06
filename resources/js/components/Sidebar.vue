@@ -1,28 +1,13 @@
 <script setup>
-	import axios from 'axios';
-	import { ref, computed, inject } from 'vue'
+	import { inject } from 'vue'
+	import { useEventsStore } from '@/stores/events'
+	import { storeToRefs } from 'pinia'
 
 	const user = inject('user');
-	const events = ref([]);
 
-	const myEvents = computed(() => {
-		return events.value.filter(event => {
-			return event.members.find(member => member.id === user.id);
-		});
-	});
+	const store = useEventsStore();
+	const { events } = storeToRefs(store);
 
-
-	function getEvents() {
-		axios.get('/api/events')
-			.then(response => {
-				events.value = null;
-				events.value = response.data.result
-			})
-	}
-	getEvents();
-	setInterval(() => {
-		getEvents();
-	}, 30*1000);
 </script>
 <template>
 	<aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -54,7 +39,7 @@
 					</li>
 
 					<li class="nav-header">MOИ СОБЫТИЯ</li>
-					<li v-if="events.length" v-for="event in myEvents" class="nav-item">
+					<li v-if="events.length" v-for="event in store.myEvents" class="nav-item">
 						<router-link :to="`/dashboard/event/${event.id}`" class="nav-link">
 							<i class="fas fa-circle nav-icon"></i>
 							<p>{{ event.title }}</p>

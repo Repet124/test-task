@@ -20,7 +20,6 @@ class EventFactory extends Factory
 		return [
 			'title' => fake()->unique()->sentence(3),
 			'description' => fake()->sentence(10),
-			'creator_id' => User::factory()->create()->id
 		];
 	}
 }

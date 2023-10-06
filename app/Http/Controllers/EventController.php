@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventDestroyRequest;
+use App\Http\Requests\EventStoreRequest;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
@@ -12,14 +14,13 @@ class EventController extends Controller
 	 */
 	public function index() {
 		return response()->json([
-			'err' => null,
+			'errors' => null,
 			'result' => Event::with(['creator', 'members'])->get()
 		]);
 	}
 
 	public function show($id) {
 		return response()->json([
-			'err' => null,
 			'result' => Event::with(['creator','members'])->where('id', $id)->first()
 		]);
 	}
@@ -27,17 +28,12 @@ class EventController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(Request $request) {
-		$credentials = $request->validate([
-			'title' => 'required|max:255|unique:events',
-			'description' => 'required'
-		]);
+	public function store(EventStoreRequest $request) {
 
-		$credentials['creator_id'] = auth()->user()->id;
+		$credentials = $request->validated();
 
 		if (Event::create($credentials)) {
 			return response()->json([
-				'error' => null,
 				'result' => true
 			]);
 		}
@@ -46,49 +42,26 @@ class EventController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Event $event) {
-		if (auth()->user()->id === $event->creator->id) {
-			$event->delete();
-			return response()->json([
-				'error'=> null,
-				'result' => true
-			]);
-		}
+	public function destroy(Event $event, EventDestroyRequest $request) {
+
+		$event->delete();
+
 		return response()->json([
-			'error' => 'creator id dont match with user',
-			'result' => false
+			'result' => true
 		]);
 	}
 
 	public function involve(Event $event) {
-		$user = auth()->user();
-
-		if($event->members->contains($user)) {
-			return response()->json([
-				'error' => 'you are already involvments',
-				'result' => false
-			]);
-		}
-		$event->members()->attach($user->id);
+		$event->members()->attach(auth()->user());
 		return response()->json([
-			'error' => null,
 			'result' => true
 		]);
 	}
 
 	public function leave(Event $event) {
-		$user = auth()->user();
-
-		if($event->members->contains($user)) {
-			$event->members()->detach($user->id);
-			return response()->json([
-				'error' => null,
-				'result' => true
-			]);
-		}
+		$event->members()->detach(auth()->user());
 		return response()->json([
-			'error' => 'you are not involments in event',
-			'result' => false
+			'result' => true
 		]);
 	}
 }

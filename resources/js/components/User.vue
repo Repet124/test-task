@@ -1,25 +1,21 @@
 <script setup>
+	import { inject} from 'vue'
+
 	import Title from './Title.vue';
 
-	import axios from 'axios';
-	import { ref, inject} from 'vue'
+	import { useUsersStore } from '@/stores/users.js';
 
 	const props = defineProps(['id']);
-	const user = inject('user');
+	const store = useUsersStore();
 
-	const userData = ref(null);
-
-	function getUser() {
-		axios.get('/api/users/'+props.id)
-			.then(response => {
-				userData.value = response.data.result
-			})
+	if (!store.users) {
+		store.refresh();
 	}
-	getUser();
+
 </script>
 
 <template>
-	<div v-if="!userData" class="content-wrapper">
+	<div v-if="!store.userById(props.id)" class="content-wrapper">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-lg-6">
@@ -36,7 +32,7 @@
 	</div>
 	<div v-else class="content-wrapper">
 		<!-- Content Header (Page header) -->
-		<Title>{{ userData.last_name }} {{ userData.first_name }}</Title>
+		<Title>{{ store.userById(props.id).last_name }} {{ store.userById(props.id).first_name }}</Title>
 		<!-- /.content-header -->
 
 		<!-- Main content -->
@@ -50,10 +46,10 @@
 							</div>
 							<div class="card-body">
 								<p class="card-text">
-									Дата регистрации: {{ userData.created_at.split('T')[0] }}
+									Дата регистрации: {{ store.userById(props.id).created_at.split('T')[0] }}
 								</p>
 								<p class="card-text">
-									Дата регистрации: {{ userData.birthday ? userData.birthday : 'Не указано' }}
+									Дата регистрации: {{ store.userById(props.id).birthday ? store.userById(props.id).birthday : 'Не указано' }}
 								</p>
 
 							</div>

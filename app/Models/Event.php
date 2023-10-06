@@ -20,6 +20,14 @@ class Event extends Model
 		'creator_id'
 	];
 
+	protected static function booted(): void {
+
+		static::deleting(function(Event $event) {
+			$event->members()->detach();
+		});
+
+	}
+
 	public function creator() {
 		return $this->belongsTo(User::class, 'creator_id');
 	}

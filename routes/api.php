@@ -25,5 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/events/{event}/involve', [EventController::class, 'involve'])->name('event-involve');
 	Route::get('/events/{event}/leave', [EventController::class, 'leave'])->name('event-leave');
 
+	Route::get('/users', [UserController::class, 'index'])->name('user-show');
 	Route::get('/users/{user}', [UserController::class, 'show'])->name('user-show');
 });

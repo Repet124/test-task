@@ -1,15 +1,24 @@
 <script setup>
+	import axios from 'axios';
+	import { provide, ref } from 'vue';
+
 	import Header from './components/Header.vue';
 	import Sidebar from './components/Sidebar.vue';
+	import ErrorModal from './components/ErrorModal.vue';
 
-	import { provide } from 'vue';
+	import { useEventsStore } from '@/stores/events.js';
 
-	const props = defineProps(['user']);
-	provide('user', props.user);
+	const eventsStore = useEventsStore();
+
+	setInterval(() => {
+		eventsStore.refresh();
+	}, 30*1000);
+
 </script>
 
 <template>
 	<!-- Navbar -->
+	<ErrorModal />
 	<Header />
 	<!-- /.navbar -->
 
