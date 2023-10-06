@@ -40,7 +40,7 @@ class TestingSeeder extends Seeder
 		$event
 			->members()
 			->attach(
-				User::all() // BAD PRACTIC!!! MUST BE SINGLETON!!! It was maked for a code reading usefully
+				User::all() // BAD PRACTIC!!! It was maked for a code reading usefully
 					->random(rand($from, $to)) // Users for that event
 					->map(fn(User $user) => $user->id) // users collection to users id collection
 			);
